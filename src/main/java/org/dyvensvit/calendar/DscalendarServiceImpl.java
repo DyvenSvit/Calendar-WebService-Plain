@@ -1,6 +1,7 @@
 package org.dyvensvit.calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.time.Month;
@@ -18,6 +19,7 @@ public class DscalendarServiceImpl implements DscalendarService {
     }
 
     @Override
+    @Cacheable(value = "months")
     public DsMonth getMonth(Year year, Month month) {
         return dscalendarDao.getMonth(year, month);
     }

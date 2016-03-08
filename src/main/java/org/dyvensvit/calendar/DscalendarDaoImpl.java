@@ -42,6 +42,8 @@ public class DscalendarDaoImpl implements DscalendarDao{
         }).collect(Collectors.toList());
         DsMonth dsMonth = new DsMonth();
         dsMonth.setDays(days);
+        dsMonth.setYear(year.getValue());
+        dsMonth.setMonth(month.getValue());
         return dsMonth;
     }
 
