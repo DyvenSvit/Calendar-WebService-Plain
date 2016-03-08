@@ -27,7 +27,7 @@ public class DscalendarApplication {
 		SpringApplication.run(DscalendarApplication.class, args);
 	}
 
-	@RequestMapping(value = "/{year}/{month}", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/{year}/{month}", produces = {MediaType.APPLICATION_JSON_UTF8_VALUE})
 	@ResponseBody
 	DsMonth getMonth(@PathVariable final Integer year, @PathVariable final Integer month) {
 		return dscalendarService.getMonth(Year.of(year), Month.of(month));
