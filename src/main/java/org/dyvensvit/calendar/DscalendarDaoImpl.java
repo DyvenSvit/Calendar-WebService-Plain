@@ -164,6 +164,7 @@ public class DscalendarDaoImpl implements DscalendarDao{
         }
 
         final Path rootPath = Paths.get(configurationPath);
+        LOG.info("Root path: " + rootPath);
         if (!rootPath.toFile().exists()) {
             throw new IllegalArgumentException("No root path exists: " + configurationPath + "probably configuration " +
                     "of DS_CALENDAR_SOURCE_HOME points on directory that doesn't exist");
