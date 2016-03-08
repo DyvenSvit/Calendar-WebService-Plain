@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,7 +14,6 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -34,11 +32,6 @@ public class DscalendarDaoImpl implements DscalendarDao{
     @Override
     public DsMonth getMonth(Year year, Month month) {
         Path monthDirectoryPath = getDirectoryForMonth(year, month);
-        File monthDirectory = monthDirectoryPath.toFile();
-        if (!monthDirectory.exists()) {
-            throw new IllegalArgumentException("No home directory for month: " + month.name());
-        }
-
         List<String> daysIndexes = getDaysForMonthAndYear(month, year);
         final List<String> infoLines = getLinesFromCfile(monthDirectoryPath);
         List<DsDay> days = daysIndexes.stream().map(dayIndex -> {
@@ -108,7 +101,14 @@ public class DscalendarDaoImpl implements DscalendarDao{
     private Path getDirectoryForMonth(final Year year, final Month month) {
         Path root = getRootDirectoryPath();
         Path yearDirectoryPath = root.resolve(String.valueOf(year.getValue()));
+        if (!yearDirectoryPath.toFile().exists()) {
+            throw new IllegalArgumentException("No home directory for year: " + year.getValue());
+        }
         String monthVal = resolveMonthDirectoryName(month);
+        Path monthDirectoryPath = yearDirectoryPath.resolve(monthVal);
+        if (!monthDirectoryPath.toFile().exists()) {
+            throw new IllegalArgumentException("No home directory for month: " + month.name());
+        }
         return yearDirectoryPath.resolve(monthVal);
     }
 
@@ -162,6 +162,12 @@ public class DscalendarDaoImpl implements DscalendarDao{
         if (StringUtils.isEmpty(configurationPath)) {
             throw new IllegalStateException("DS_CALENDAR_SOURCE_HOME is not set");
         }
-        return Paths.get(configurationPath);
+
+        final Path rootPath = Paths.get(configurationPath);
+        if (!rootPath.toFile().exists()) {
+            throw new IllegalArgumentException("No root path exists: " + configurationPath + "probably configuration " +
+                    "of DS_CALENDAR_SOURCE_HOME points on directory that doesn't exist");
+        }
+        return rootPath;
     }
 }
