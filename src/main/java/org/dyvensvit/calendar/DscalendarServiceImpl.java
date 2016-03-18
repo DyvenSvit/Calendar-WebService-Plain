@@ -8,10 +8,10 @@ import java.time.Month;
 import java.time.Year;
 
 @Component
-public class DscalendarServiceImpl implements DscalendarService {
+public class DsCalendarServiceImpl implements DsCalendarService {
 
     @Autowired
-    private DscalendarDao dscalendarDao;
+    private DsCalendarDao dscalendarDao;
 
     @Override
     public DsMonth getMonth(Month month) {
@@ -22,5 +22,11 @@ public class DscalendarServiceImpl implements DscalendarService {
     @Cacheable(value = "months")
     public DsMonth getMonth(Year year, Month month) {
         return dscalendarDao.getMonth(year, month);
+    }
+	
+	@Override
+    @Cacheable(value = "days")
+    public DsDayFull getDay(Year year, Month month, Integer day) {
+        return dscalendarDao.getDay(year, month, day);
     }
 }

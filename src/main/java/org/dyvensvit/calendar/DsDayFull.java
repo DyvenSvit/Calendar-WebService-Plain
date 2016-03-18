@@ -1,9 +1,9 @@
 package org.dyvensvit.calendar;
 
-public class DsDay {
+public class DsDayFull extends DsDayTiny {
     //TODO: Comments
-    private String date;
-    private String info;
+    private String month;
+    private String year;
     private String liturgy;
     private String morning;
     private String night;
@@ -12,20 +12,20 @@ public class DsDay {
     private String saints;
     private String quotes;
 
-    public String getDate() {
-        return date;
+    public String getMonth() {
+        return month;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setMonth(String month) {
+        this.month = month;
     }
 
-    public String getInfo() {
-        return info;
+    public String getYear() {
+        return year;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public void setYear(String year) {
+        this.year = year;
     }
 
     public String getLiturgy() {
@@ -82,5 +82,26 @@ public class DsDay {
 
     public void setQuotes(String quotes) {
         this.quotes = quotes;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DsDayFull dsDay = (DsDayFull) o;
+
+        if (!year.equals(dsDay.year)) return false;
+        if (!month.equals(dsDay.month)) return false;
+        return getDate().equals(dsDay.getDate());
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getDate().hashCode();
+        result = result + month.hashCode();
+        result = result + year.hashCode();
+        return result;
     }
 }

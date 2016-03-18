@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.time.Month;
 import java.time.Year;
 import java.util.ArrayList;
@@ -17,11 +18,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class DscalendarDaoImpl implements DscalendarDao{
-    private static final Logger LOG = Logger.getLogger(DscalendarDaoImpl.class);
+public class DsCalendarDaoImpl implements DsCalendarDao {
+    private static final Logger LOG = Logger.getLogger(DsCalendarDaoImpl.class);
 
     public static final String DS_CALENDAR_SOURCE_HOME = "DS_CALENDAR_SOURCE_HOME";
-    @Value("${dscalendar.alrernative.source.home}")
+    @Value("${dscalendar.alternative.source.home}")
     private String dsCalendarAlternativeSource;
 
     @Override
@@ -34,17 +35,39 @@ public class DscalendarDaoImpl implements DscalendarDao{
         Path monthDirectoryPath = getDirectoryForMonth(year, month);
         List<String> daysIndexes = getDaysForMonthAndYear(month, year);
         final List<String> infoLines = getLinesFromCfile(monthDirectoryPath);
-        List<DsDay> days = daysIndexes.stream().map(dayIndex -> {
-            DsDay dsDay = getDay(monthDirectoryPath, dayIndex);
+        List<DsDayTiny> days = daysIndexes.stream().map(dayIndex -> {
+            DsDayTiny dsDay = getDay(monthDirectoryPath, dayIndex);
             String infoLine  = infoLines.get(Integer.valueOf(dayIndex)-1);
             dsDay.setInfo(infoLine);
             return dsDay;
         }).collect(Collectors.toList());
         DsMonth dsMonth = new DsMonth();
         dsMonth.setDays(days);
-        dsMonth.setYear(year.getValue());
-        dsMonth.setMonth(month.getValue());
+        dsMonth.setYear(String.valueOf(year.getValue()));
+        dsMonth.setMonth(String.format("%02d", month.getValue()));
         return dsMonth;
+    }
+	
+	@Override
+    public DsDayFull getDay(Year year, Month month, Integer day) {
+        Path monthDirectoryPath = getDirectoryForMonth(year, month);
+		String dayIndex = String.format("%02d", day);
+		DsDayFull dsDay = new DsDayFull();
+        dsDay.setYear(String.valueOf(year.getValue()));
+        dsDay.setMonth(String.format("%02d", month.getValue()));
+		dsDay.setDate(dayIndex);
+        final List<String> infoLines = getLinesFromCfile(monthDirectoryPath);
+        String infoLine  = infoLines.get(day-1);
+        dsDay.setInfo(infoLine);
+        dsDay.setLiturgy(getStringContentOfFile(getPathToFileByPrefix("u", monthDirectoryPath, dayIndex, null)));
+        dsDay.setMorning(getStringContentOfFile(getPathToFileByPrefix("t", monthDirectoryPath, dayIndex, "u")));
+        dsDay.setNight(getStringContentOfFile(getPathToFileByPrefix("t", monthDirectoryPath, dayIndex, "v")));
+        dsDay.setHours(getStringContentOfFile(getPathToFileByPrefix("t", monthDirectoryPath, dayIndex, "c")));
+        dsDay.setReadings(getStringContentOfFile(getPathToFileByPrefix("b", monthDirectoryPath, dayIndex, null)));
+        dsDay.setSaints(getStringContentOfFile(getPathToFileByPrefix("b", monthDirectoryPath, dayIndex, null)));
+        dsDay.setQuotes(getStringContentOfFile(getPathToFileByPrefix("p", monthDirectoryPath, dayIndex, null)));
+		
+        return dsDay;
     }
 
     private List<String> getLinesFromCfile(final Path monthDirectoryPath) {
@@ -56,17 +79,10 @@ public class DscalendarDaoImpl implements DscalendarDao{
         }
     }
 
-    private DsDay getDay(final Path monthDirectoryPath, final String dayIndex) {
-        DsDay dsDay = new DsDay();
+    private DsDayTiny getDay(final Path monthDirectoryPath, final String dayIndex) {
+        DsDayTiny dsDay = new DsDayTiny();
         dsDay.setDate(dayIndex);
         dsDay.setInfo("INFO IS EMPTY");
-        dsDay.setLiturgy(getStringContentOfFile(getPathToFileByPrefix("u", monthDirectoryPath, dayIndex, null)));
-        dsDay.setMorning(getStringContentOfFile(getPathToFileByPrefix("t", monthDirectoryPath, dayIndex, "u")));
-        dsDay.setNight(getStringContentOfFile(getPathToFileByPrefix("t", monthDirectoryPath, dayIndex, "v")));
-        dsDay.setHours(getStringContentOfFile(getPathToFileByPrefix("t", monthDirectoryPath, dayIndex, "c")));
-        dsDay.setReadings(getStringContentOfFile(getPathToFileByPrefix("b", monthDirectoryPath, dayIndex, null)));
-        dsDay.setSaints(getStringContentOfFile(getPathToFileByPrefix("b", monthDirectoryPath, dayIndex, null)));
-        dsDay.setQuotes(getStringContentOfFile(getPathToFileByPrefix("p", monthDirectoryPath, dayIndex, null)));
         return dsDay;
     }
 
@@ -80,7 +96,7 @@ public class DscalendarDaoImpl implements DscalendarDao{
 
     private String getStringContentOfFile(final Path path) {
         try {
-            return new String(Files.readAllBytes(path));
+            return new String(Files.readAllBytes(path), "UTF-8");
         } catch (IOException e) {
             LOG.warn("No such file: " + path.toString());
             return null;

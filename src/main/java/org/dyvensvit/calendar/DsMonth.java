@@ -4,33 +4,33 @@ import java.util.List;
 
 public class DsMonth {
 
-    private Integer month;
+    private String month;
 
-    private Integer year;
+    private String year;
 
-    private List<DsDay> days;
+    private List<DsDayTiny> days;
 
-    public List<DsDay> getDays() {
+    public List<DsDayTiny> getDays() {
         return days;
     }
 
-    public void setDays(List<DsDay> days) {
+    public void setDays(List<DsDayTiny> days) {
         this.days = days;
     }
 
-    public Integer getMonth() {
+    public String getMonth() {
         return month;
     }
 
-    public void setMonth(Integer month) {
+    public void setMonth(String month) {
         this.month = month;
     }
 
-    public Integer getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(Integer year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
