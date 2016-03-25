@@ -64,7 +64,7 @@ public class DsCalendarDaoImpl implements DsCalendarDao {
         dsDay.setNight(getStringContentOfFile(getPathToFileByPrefix("t", monthDirectoryPath, dayIndex, "v")));
         dsDay.setHours(getStringContentOfFile(getPathToFileByPrefix("t", monthDirectoryPath, dayIndex, "c")));
         dsDay.setReadings(getStringContentOfFile(getPathToFileByPrefix("b", monthDirectoryPath, dayIndex, null)));
-        dsDay.setSaints(getStringContentOfFile(getPathToFileByPrefix("b", monthDirectoryPath, dayIndex, null)));
+        dsDay.setSaints(getStringContentOfFile(getPathToFileByPrefix("s", monthDirectoryPath, dayIndex, null)));
         dsDay.setQuotes(getStringContentOfFile(getPathToFileByPrefix("p", monthDirectoryPath, dayIndex, null)));
 		
         return dsDay;
