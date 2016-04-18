@@ -1,9 +1,12 @@
 package org.dyvensvit.calendar;
 
+import javafx.application.Application;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,10 +23,15 @@ import java.time.Year;
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
-public class DsCalendarApplication {
+public class DsCalendarApplication  extends SpringBootServletInitializer {
 
 	@Autowired
 	private DsCalendarService dscalendarService;
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(Application.class);
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(DsCalendarApplication.class, args);
