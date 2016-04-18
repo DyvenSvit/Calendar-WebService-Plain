@@ -60,6 +60,9 @@
 		</profile>
 		<profile>
 			<id>war</id>
+			<activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
 			<properties>
 				<start-class>org.dyvensvit.calendar.DsCalendarApplication</start-class>
 				<packaging.type>war</packaging.type>
